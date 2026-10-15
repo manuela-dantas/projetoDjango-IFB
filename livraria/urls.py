@@ -9,8 +9,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     # Login, logout e recuperação de senha prontos do Django: /contas/login/, /contas/logout/ ...
     path("contas/", include("django.contrib.auth.urls")),
-    # Todos os outros endereços são resolvidos pelo arquivo catalog/urls.py
-    path("", include("catalog.urls")),
+    # Todos os outros endereços são resolvidos pelo arquivo catalogo/urls.py
+    path("", include("catalogo.urls", namespace="catalogo")),
 ]
 
 # Só em desenvolvimento (DEBUG=True): o próprio Django entrega as imagens enviadas (capas).

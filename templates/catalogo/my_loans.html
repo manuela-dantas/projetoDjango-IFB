@@ -1,56 +1,53 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block title %}Meus empréstimos · Biblioteca{% endblock %}
 {% block content %}
   <h1>Meus empréstimos</h1>
+
   {% if loans %}
-    <table>
-      <thead>
-        <tr>
-          <th>Capa</th>
-          <th>Livro</th>
-          <th>Emprestado em</th>
-          <th>Devolver até</th>
-          <th>Status</th>
-          <th>Ação</th>
-        </tr>
-      </thead>
-      <tbody>
-      {% for loan in loans %}
-        <tr>
-          <td>
-            {% if loan.book.image %}
-              <img src="{{ loan.book.image.url }}" alt="Capa de {{ loan.book.title }}" 
-                   style="width: 50px; height: 75px; object-fit: cover; border-radius: 4px;">
-            {% else %}
-              <div style="width: 50px; height: 75px; background: var(--accent); 
-                          border-radius: 4px; display: flex; align-items: center; 
-                          justify-content: center; color: var(--bg); font-size: 10px; 
-                          text-align: center;">Sem capa</div>
-            {% endif %}
-          </td>
-          <td>{{ loan.book.title }}</td>
-          <td>{{ loan.borrowed_at|date:'d/m/Y H:i' }}</td>
-          <td>{{ loan.due_date|date:'d/m/Y' }}</td>
-          <td>
-            {% if loan.returned_at %}
-              <span class="muted">Devolvido em {{ loan.returned_at|date:'d/m/Y H:i' }}</span>
-            {% elif loan.is_overdue %}
-              <strong class="danger">Atrasado</strong>
-            {% else %}
-              <span>Ativo</span>
-            {% endif %}
-          </td>
-          <td>
-            {% if not loan.returned_at %}
-<form method="post" action="{% url 'catalogo:return_book' loan.id %}">                <button class="btn" type="submit">Devolver</button>
-              </form>
-            {% endif %}
-          </td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Livro</th>
+            <th>Emprestado em</th>
+            <th>Devolver até</th>
+            <th>Situação</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for loan in loans %}
+            <tr>
+              {# loan.book segue a ForeignKey até o livro #}
+              <td>{{ loan.book.title }}</td>
+              {# O filtro date formata a data: dia/mês/ano hora:minuto #}
+              <td>{{ loan.borrowed_at|date:"d/m/Y H:i" }}</td>
+              <td>{{ loan.due_date|date:"d/m/Y" }}</td>
+              <td>
+                {# A ordem importa: primeiro devolvido, depois atrasado, senão em dia #}
+                {% if loan.returned_at %}
+                  <span class="muted">Devolvido em {{ loan.returned_at|date:"d/m/Y" }}</span>
+                {% elif loan.is_overdue %}
+                  <strong class="danger">Atrasado</strong>
+                {% else %}
+                  <span class="success">Em dia</span>
+                {% endif %}
+              </td>
+              <td>
+                {# O botão só aparece enquanto o empréstimo está ativo #}
+                {% if loan.is_active %}
+                  <form class="inline" method="post" action="{% url 'catalog:return_book' loan.id %}">
+                    {% csrf_token %}
+                    <button class="btn" type="submit">Devolver</button>
+                  </form>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   {% else %}
-    <p class="muted">Você ainda não possui empréstimos.</p>
+    <p class="muted">Você ainda não pegou nenhum livro emprestado.</p>
   {% endif %}
 {% endblock %}

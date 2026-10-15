@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Empréstimos atrasados · Biblioteca{% endblock %}
+{% block content %}
+  <div class="card">
+    <h1>Empréstimos em atraso</h1>
+
+    {% if overdue_loans %}
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Livro</th>
+              <th>Usuário</th>
+              <th>Data de vencimento</th>
+              <th>Prazo</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for loan in overdue_loans %}
+              <tr>
+                <td>{{ loan.book.title }}</td>
+                <td>{{ loan.user.get_username }}</td>
+                <td>{{ loan.due_date|date:'d/m/Y' }}</td>
+                <td><span class="danger">Atrasado</span></td>
+                <td>
+                  <form method="post" action="{% url 'catalogo:admin_mark_returned' loan.id %}">
+                    {% csrf_token %}
+                    <button class="btn" type="submit">Marcar devolvido</button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="muted">Não há empréstimos atrasados no momento.</p>
+    {% endif %}
+  </div>
+{% endblock %}
