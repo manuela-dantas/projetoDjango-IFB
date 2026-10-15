@@ -136,3 +136,7 @@ LOGOUT_REDIRECT_URL = 'login'
 # Media files (uploads de usuários)
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+# Autenticação (os valores são NOMES de rotas, não endereços)
+LOGIN_URL = 'login'  # para onde vai quem tenta abrir uma página protegida sem estar logado
+LOGIN_REDIRECT_URL = 'catalogo:book_list'  # para onde vai depois de entrar
+LOGOUT_REDIRECT_URL = 'login'  # para onde vai depois de sair
