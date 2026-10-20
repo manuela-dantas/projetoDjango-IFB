@@ -96,6 +96,7 @@
         <a href="{% url 'catalogo:my_loans' %}">Meus empréstimos</a>
         {# Links que só a equipe (is_staff) enxerga #}
         {% if user.is_staff %}
+          <a href="{% url 'catalogo:overdue_loans' %}">Atrasados</a>
           <a href="{% url 'admin:index' %}">Admin</a>
         {% endif %}
       {% endif %}
